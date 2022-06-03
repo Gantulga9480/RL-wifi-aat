@@ -1,0 +1,17 @@
+Network:
+	107
+	54
+	4
+Batch:
+	512
+Epochs:
+	5
+Epsilon:
+	0.9999
+	0.1
+Discount:
+	0.999
+Learning rate:
+	0.001
+Time:
+	12 hour

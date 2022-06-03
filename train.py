@@ -8,6 +8,9 @@ TARGET_SET_FREQ = 5
 env = Environment()
 model = DQN([
     (54, 'relu'),
+    (54, 'relu'),
+    (54, 'relu'),
+    (54, 'relu'),
     (4, 'linear')
 ])
 replay_buffer = ReplayBuffer(MAX_BUFFER, MIN_BUFFER)

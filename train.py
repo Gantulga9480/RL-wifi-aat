@@ -1,14 +1,13 @@
 from environment import Environment
 from model import DQN, ReplayBuffer
 
-MAX_BUFFER = 10000
-MIN_BUFFER = 1000
+MAX_BUFFER = 100000
+MIN_BUFFER = 10000
 TARGET_SET_FREQ = 5
 
 env = Environment()
 model = DQN([
-    (25, 'relu'),
-    (25, 'relu'),
+    (54, 'relu'),
     (4, 'linear')
 ])
 replay_buffer = ReplayBuffer(MAX_BUFFER, MIN_BUFFER)

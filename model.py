@@ -15,8 +15,8 @@ class DQN:
     DISCOUNT_RATE = 0.999
     BATCH_SIZE = 512
     EPOCHS = 5
-    EPSILON_DECAY = 0.999
-    MIN_EPSILON = 0.01
+    EPSILON_DECAY = 0.9999
+    MIN_EPSILON = 0.1
 
     def __init__(self, conf) -> None:
 
@@ -39,7 +39,7 @@ class DQN:
 
     def create_model(self, model_layers) -> Sequential:
         model = Sequential()
-        model.add(Input(shape=(107,)))
+        model.add(Input(shape=(108,)))
         for layer in model_layers:
             model.add(Dense(layer[0], activation=layer[1]))
         model.compile(loss="mse",

@@ -20,6 +20,8 @@ class Environment:
         self.episode_r = 0
         self.reward_hist = []
 
+        self.graph = plt.subplot()
+
         self.state = []
 
     def __del__(self):
@@ -40,7 +42,9 @@ class Environment:
             self.over = True
             self.episode_count += 1
             self.reward_hist.append(self.episode_r/self.MAX_STEP)
-        return float(res[1]), self.state.copy()
+        st = [4]
+        st.extend(self.state)
+        return float(res[1]), st
 
     def reset(self):
         print('Environment reset')
@@ -50,7 +54,9 @@ class Environment:
         self.episode_r = 0
         for _ in range(self.MAX_STEP):
             self.state.append(0)
-        return self.state.copy()
+        st = [4]
+        st.extend(self.state)
+        return st
 
     def save(self):
         with open('reward_history.txt', 'w') as f:
@@ -58,5 +64,6 @@ class Environment:
                 f.write(str(val)+'\n')
 
     def plot(self):
-        plt.plot(self.reward_hist, 'b')
+        self.graph.cla()
+        self.graph.plot(self.reward_hist)
         plt.pause(0.1)

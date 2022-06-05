@@ -56,6 +56,8 @@ class Environment:
             self.state.append(0)
         st = [4]
         st.extend(self.state)
+        self.graph.cla()
+        self.graph.plot(self.reward_hist)
         return st
 
     def save(self):
@@ -64,6 +66,4 @@ class Environment:
                 f.write(str(val)+'\n')
 
     def plot(self):
-        self.graph.cla()
-        self.graph.plot(self.reward_hist)
-        plt.pause(0.1)
+        plt.pause(0.00001)

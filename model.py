@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.models import load_model as loadModel
+from tensorflow.keras.models import load_model
 from tensorflow.keras.layers import Activation, Dense, Input, Dropout
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import mixed_precision
@@ -15,10 +15,10 @@ class DQN:
     DISCOUNT_RATE = 0.999
     BATCH_SIZE = 512
     EPOCHS = 5
-    EPSILON_DECAY = 0.9999
+    EPSILON_DECAY = 0.99995
     MIN_EPSILON = 0.1
 
-    def __init__(self, conf) -> None:
+    def __init__(self) -> None:
 
         gpus = tf.config.list_physical_devices('GPU')
         if gpus:
@@ -31,33 +31,36 @@ class DQN:
                 # Memory growth must be set before GPUs have been initialized
                 print(e)
 
-        self.main_model = self.create_model(conf)
-        self.target_model = self.create_model(conf)
+        self.main_model = self.create_model()
+        self.target_model = self.create_model()
         self.target_model.set_weights(self.main_model.get_weights())
 
         self.epsilon = 1
 
-    def create_model(self, model_layers) -> Sequential:
+    def create_model(self) -> Sequential:
         model = Sequential()
         model.add(Input(shape=(108,)))
-        for layer in model_layers:
-            model.add(Dense(layer[0], activation=layer[1]))
+        model.add(Dropout(0.3))
+        model.add(Dense(54, activation='relu'))
+        model.add(Dropout(0.3))
+        model.add(Dense(27, activation='relu'))
+        model.add(Dense(4, activation='linear'))
         model.compile(loss="mse",
                       optimizer=Adam(learning_rate=self.LEARNING_RATE),
                       metrics=["accuracy"])
         model.summary()
         return model
 
-    def save_model(self, name='model.h5'):
+    def save(self, name='model.h5'):
         if not name.endswith('.h5'):
             name += '.h5'
         self.main_model.save(name)
 
-    def load_model(self, path='model.h5'):
+    def load(self, path='model.h5'):
         if not path.endswith('.h5'):
             path += '.h5'
         try:
-            self.main_model = loadModel(path)
+            self.main_model = load_model(path)
             self.target_model.set_weights(self.main_model.get_weights())
         except IOError:
             print('Model file not found!')
@@ -67,12 +70,14 @@ class DQN:
         self.target_model.set_weights(self.main_model.get_weights())
 
     def predict_action(self, state):
-        self.epsilon = max(self.epsilon * self.EPSILON_DECAY, self.MIN_EPSILON)
         if np.random.random() < self.epsilon:
             return random.randint(0, 3)
         else:
             action_values = self.main_model.predict(np.expand_dims(state, axis=0))[0]
             return np.argmax(action_values)
+
+    def decay_epsilon(self):
+        self.epsilon = max(self.epsilon * self.EPSILON_DECAY, self.MIN_EPSILON)
 
     def train(self, samples):
         current_states = np.array([item[0] for item in samples])
@@ -99,7 +104,7 @@ class DQN:
                             epochs=self.EPOCHS,
                             batch_size=self.BATCH_SIZE,
                             shuffle=False,
-                            verbose=1)
+                            verbose=2)
 
 
 class ReplayBuffer:
@@ -118,15 +123,3 @@ class ReplayBuffer:
 
     def sample(self, sample_size):
         return random.sample(self.buffer, sample_size)
-
-
-if __name__ == '__main__':
-    agent = DQN([
-        (10, 'relu'),
-        (10, 'relu'),
-        (4, 'linear'),
-    ])
-
-    agent.save_model()
-    agent.load_model()
-    agent.main_model.summary()

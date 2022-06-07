@@ -1,22 +1,6 @@
-from environment import Environment
-import random
+import tensorflow as tf
 
 
-MAX_EPISODE = 2
+m = tf.keras.models.load_model('6_6_2/model_571_687.943.h5')
 
-env = Environment()
-episode = 0
-
-while True:
-
-    state = env.reset()
-
-    while not env.over:
-
-        r = env.step(random.randint(0, 3))
-
-        print(r)
-
-    episode += 1
-    if episode == MAX_EPISODE:
-        exit()
+m.summary()

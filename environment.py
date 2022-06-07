@@ -41,8 +41,8 @@ class Environment:
         if self.step_count == self.MAX_STEP:
             self.over = True
             self.episode_count += 1
-            self.reward_hist.append(self.episode_r/self.MAX_STEP)
-        st = [4]
+            self.reward_hist.append(self.episode_r)
+        st = [self.step_count]
         st.extend(self.state)
         return float(res[1]), st
 
@@ -54,7 +54,7 @@ class Environment:
         self.episode_r = 0
         for _ in range(self.MAX_STEP):
             self.state.append(0)
-        st = [4]
+        st = [self.step_count]
         st.extend(self.state)
         self.graph.cla()
         self.graph.plot(self.reward_hist)

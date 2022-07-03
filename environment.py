@@ -1,5 +1,6 @@
 import socket
 from matplotlib import pyplot as plt
+import random
 
 HOST = "127.0.0.1"
 PORT = 8888
@@ -19,8 +20,10 @@ class Environment:
         self.episode_count = 0
         self.episode_r = 0
         self.reward_hist = []
+        self.last_r_hist = []
 
-        self.graph = plt.subplot()
+        self.graph = plt.subplot('211')
+        self.graph1 = plt.subplot('212')
 
         self.state = []
 
@@ -36,15 +39,17 @@ class Environment:
         if int(res[0]) != self.step_count:
             print("Env step Error")
             return
+        r = float(res[1])  # / (self.MAX_STEP - self.step_count)
+        s = [self.step_count]
+        s.extend(self.state)
+        self.episode_r += r
         self.step_count += 1
-        self.episode_r += float(res[1])
         if self.step_count == self.MAX_STEP:
             self.over = True
             self.episode_count += 1
             self.reward_hist.append(self.episode_r)
-        st = [self.step_count]
-        st.extend(self.state)
-        return float(res[1]), st
+            self.last_r_hist.append(r)
+        return r, s
 
     def reset(self):
         print('Environment reset')
@@ -57,12 +62,17 @@ class Environment:
         st = [self.step_count]
         st.extend(self.state)
         self.graph.cla()
+        self.graph1.cla()
         self.graph.plot(self.reward_hist)
+        self.graph1.plot(self.last_r_hist)
         return st
 
     def save(self):
         with open('reward_history.txt', 'w') as f:
             for val in self.reward_hist:
+                f.write(str(val)+'\n')
+        with open('last_reward_history.txt', 'w') as f:
+            for val in self.last_r_hist:
                 f.write(str(val)+'\n')
 
     def plot(self):

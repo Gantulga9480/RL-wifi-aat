@@ -12,11 +12,11 @@ import random
 class DQN:
 
     LEARNING_RATE = 0.0003
-    DISCOUNT_RATE = 0.9
-    BATCH_SIZE = 1024
-    EPOCHS = 10
+    DISCOUNT_RATE = 1
+    BATCH_SIZE = 32
+    EPOCHS = 5
     EPSILON_DECAY = 0.99995
-    MIN_EPSILON = 0.1
+    MIN_EPSILON = 0.01
 
     def __init__(self) -> None:
 
@@ -40,8 +40,8 @@ class DQN:
     def create_model(self) -> Sequential:
         model = Sequential()
         model.add(Input(shape=(108,)))
-        model.add(Dense(100, activation='relu'))
-        model.add(Dense(50, activation='relu'))
+        model.add(Dense(27, activation='relu'))
+        model.add(Dense(27, activation='relu'))
         model.add(Dense(4, activation='linear'))
         model.compile(loss="mse",
                       optimizer=Adam(learning_rate=self.LEARNING_RATE),
